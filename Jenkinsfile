@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'prydin/ci-build-jdk11'
+    }
+
+  }
   stages {
     stage('Build') {
       steps {

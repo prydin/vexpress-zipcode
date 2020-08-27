@@ -19,5 +19,11 @@ pipeline {
       }
     }
 
+    stage('Publish') {
+      steps {
+        archiveArtifacts(artifacts: 'build/libs/zipcode-*.jar ', fingerprint: true, onlyIfSuccessful: true)
+      }
+    }
+
   }
 }

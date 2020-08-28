@@ -1,3 +1,7 @@
+@Library('vra8')_
+
+def vra = VRA("https://bogus", "bogus")
+
 pipeline {
   agent any
   stages {

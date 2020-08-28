@@ -1,4 +1,4 @@
-@Library('vra8')_
+@Library('vra8@master')_
 
 def vra = VRA("https://bogus", "bogus")
 

@@ -1,7 +1,7 @@
 @Library('vra8@master')_
 
 def vra
-withCredentials([usernameColonPassword(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
+withCredentials([string(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
   vra = new VRA8("https://api.mgmt.cloud.vmware.com", "$vraToken")
 }
 

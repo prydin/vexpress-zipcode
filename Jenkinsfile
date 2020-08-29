@@ -29,7 +29,9 @@ pipeline {
     
     stage('Deploy') {
       steps {
-        vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
+        script {
+          vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
+        }
      }
    }
  }

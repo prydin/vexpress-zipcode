@@ -32,8 +32,8 @@ pipeline {
       steps {
         script {
           def dep = vra.deployFromCatalog('plain-ubuntu-18', '6', 'Pontus Project', 'Invoked from Jenkins ' + System.currentTimeMillis())
-          //assert dep != null
-          //vmIp = vra.waitForIPAddress(dep.id)
+          assert dep != null
+          vmIp = vra.waitForIPAddress(dep.id)
         }
         echo "Address of machine is: $vmIp"
      }

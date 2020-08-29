@@ -34,7 +34,7 @@ pipeline {
           def dep = vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Invoked from Jenkins ' + System.currentTimeMillis())
           vmIp = vra.waitForIPAddress(dep.id)
         }
-        echo "Address of machine is: $vmIp
+        echo "Address of machine is: $vmIp"
      }
    }
  }

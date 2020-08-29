@@ -23,6 +23,12 @@ pipeline {
         archiveArtifacts(artifacts: 'build/libs/zipcode-*.jar ', fingerprint: true, onlyIfSuccessful: true)
       }
     }
-
+    
+    stage('Deploy') {
+      steps {
+          withCredentials([usernameColonPassword(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
+            vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
+          }
+      }
   }
 }

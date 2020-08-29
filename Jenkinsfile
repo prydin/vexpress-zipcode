@@ -30,7 +30,7 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
+          vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Invoked from Jenkins ' + System.currentTimeMillis())
         }
      }
    }

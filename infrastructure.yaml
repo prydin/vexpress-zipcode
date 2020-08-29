@@ -1,0 +1,8 @@
+deployments:
+count: 1
+catalogItem: "plain-ubuntu-18"
+deploymentName: "vexpress-zipcode-#"
+project: "Pontus Project"
+reason: "Deployment from Jenkins pipeline"
+inputs:
+  user: "demouser"

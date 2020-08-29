@@ -37,6 +37,7 @@ pipeline {
           vmIp = vra.waitForIPAddress(dep.id)
           } catch(Exception e) {
             echo e.toString()
+          }
         }
         echo "Address of machine is: $vmIp"
      }

@@ -1,6 +1,6 @@
 @Library('vra8@master')_
 
-def vra = VRA("https://bogus", "bogus")
+def vra = new VRA("https://bogus", "bogus")
 
 pipeline {
   agent any

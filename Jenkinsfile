@@ -3,7 +3,7 @@
 def vmIp 
 def vra
 withCredentials([string(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
-  vra = new VRA8("https://api.mgmt.cloud.vmware.com", "$vraToken")
+  vra = new VRA8(this, "https://api.mgmt.cloud.vmware.com", "$vraToken")
 }
 
 pipeline {

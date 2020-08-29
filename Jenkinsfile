@@ -1,6 +1,9 @@
 @Library('vra8@master')_
 
-def vra = new VRA8("https://bogus", "bogus")
+def vra
+withCredentials([usernameColonPassword(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
+  vra = new VRA8("https://api.mgmt.cloud.vmware.com", "$vraToken")
+}
 
 pipeline {
   agent any
@@ -26,9 +29,7 @@ pipeline {
     
     stage('Deploy') {
       steps {
-          withCredentials([usernameColonPassword(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
-            vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
-          }
-      }
+        vra.deployFromCatalog('plain-ubuntu-18', '4', 'Pontus Project', 'Test ' + System.currentTimeMillis())
+     }
   }
 }

@@ -31,7 +31,7 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          def dep = vra.deployCatalogItemFromConfig(readYaml('./infrastructure.yaml'))
+          def dep = vra.deployCatalogItemFromConfig(readYaml(file: './infrastructure.yaml'))
           assert dep != null
           vmIp = vra.waitForIPAddress(dep.id, 'UbuntuMachine')
         }

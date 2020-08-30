@@ -31,7 +31,7 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          def dep = vra.deployFromCatalog('plain-ubuntu-18', '6', 'Pontus Project', 'Invoked from Jenkins ' + System.currentTimeMillis())
+          def dep = vra.deployCatalogItemFromConfig(readYaml('./infrastructure.yaml'))
           assert dep != null
           vmIp = vra.waitForIPAddress(dep.id, 'UbuntuMachine')
         }

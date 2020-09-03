@@ -32,8 +32,8 @@ pipeline {
             timeout: 300, 
             version: '6')
           assert dep != null
+          echo "Deployed: $dep[0].id"
         }
-        echo "Deployed: $dep.id"
      }
    }
  }

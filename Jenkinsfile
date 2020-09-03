@@ -1,11 +1,3 @@
-@Library('vra8@master')_
-
-def vmIp 
-def vra
-withCredentials([string(credentialsId: 'vRACloudToken', variable: 'vraToken')]) {
-  vra = new VRA8(this, "https://api.mgmt.cloud.vmware.com", "$vraToken")
-}
-
 pipeline {
   agent any
   stages {
@@ -31,11 +23,17 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          def dep = vra.deployCatalogItemFromConfig(readYaml(file: './infrastructure.yaml'))
+          def dep = deployFromCatalog(
+            catalogItemName: 'plain-ubuntu-18', 
+            count: 1, 
+            deploymentName: 'Jenkins-#', 
+            projectName: 'Pontus Project', 
+            reason: 'Test', 
+            timeout: 300, 
+            version: '6')
           assert dep != null
-          vmIp = vra.waitForIPAddress(dep.id, 'UbuntuMachine')
         }
-        echo "Address of machine is: $vmIp"
+        echo "Deployed: $dep.id"
      }
    }
  }

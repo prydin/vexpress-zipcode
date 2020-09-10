@@ -24,16 +24,12 @@ pipeline {
       steps {
         script {
           def dep = vraDeployFromCatalog(
-            catalogItemName: 'plain-ubuntu-18', 
-            count: 1, 
-            deploymentName: 'Jenkins-#', 
-            projectName: 'Pontus Project', 
-            reason: 'Test', 
-            timeout: 300, 
-            version: '6',
-            inputs: '{ username: \'testuser\' }')
+            configFormat: "yaml",
+            config: readFile('infrastructure.yaml')
           assert dep != null
-          def addr = vraWaitForAddress(dep[0].id)
+          def addr = vraWaitForAddress(
+            deploymentId: dep[0].id,
+            resourceName: 'UbuntuMachine')
           echo "Deployed: $dep[0].id, address: $addr"
         }
      }

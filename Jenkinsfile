@@ -25,7 +25,7 @@ pipeline {
         script {
           def dep = vraDeployFromCatalog(
             configFormat: "yaml",
-            config: readFile('infrastructure.yaml')
+            config: readFile('infrastructure.yaml'))
           assert dep != null
           def addr = vraWaitForAddress(
             deploymentId: dep[0].id,

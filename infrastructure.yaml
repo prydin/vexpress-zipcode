@@ -1,6 +1,6 @@
 count: 1
 catalogItemName: "plain-ubuntu-18"
-version: "6"
+version: "7"
 deploymentName: "vexpress-zipcode-#"
 projectName: "JenkinsTest"
 reason: "Deployment from Jenkins pipeline"

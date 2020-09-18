@@ -2,7 +2,7 @@ count: 1
 catalogItemName: "plain-ubuntu-18"
 version: "6"
 deploymentName: "vexpress-zipcode-#"
-project: "JenkinsTest"
+projectName: "JenkinsTest"
 reason: "Deployment from Jenkins pipeline"
 inputs:
   user: "testuser"

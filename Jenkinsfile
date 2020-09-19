@@ -2,9 +2,9 @@ pipeline {
   agent any
   
   parameters {
-    string("ip")
-    string("depId")
-    string("sshkey")
+    string(name: "ip")
+    string(name: "depId")
+    string(name: "sshkey")
   }
   
   stages {

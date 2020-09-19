@@ -1,5 +1,10 @@
 pipeline {
   agent any
+  
+  def ip = ''
+  def depId = ''
+  def sshkey = ''
+  
   stages {
     stage('Build') {
       steps {
@@ -27,10 +32,10 @@ pipeline {
             configFormat: "yaml",
             config: readFile('infrastructure.yaml'))
           assert dep != null
-          def addr = vraWaitForAddress(
+          ip = vraWaitForAddress(
             deploymentId: dep[0].id,
             resourceName: 'UbuntuMachine')
-          echo "Deployed: $dep[0].id, address: $addr"
+          echo "Deployed: $dep[0].id, address: $ip"
         }
      }
    }

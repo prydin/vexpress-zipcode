@@ -23,15 +23,17 @@ pipeline {
     
     stage('Deploy') {
       steps {
-        script {
-          env.depId = vraDeployFromCatalog(
-              configFormat: "yaml",
-              config: readFile('infrastructure.yaml'))[0].id
-          env.ip = vraWaitForAddress(
-              deploymentId: env.depId,
-              resourceName: 'UbuntuMachine')[0]
-          echo "Deployed: ${env.depId} address: ${env.ip}"
-         }
+        withCredentials([usernameColonPassword(credentialsId: 'sshLogin', variable: 'PASSWORD')]) {
+          script {
+            env.depId = vraDeployFromCatalog(
+                configFormat: "yaml",
+                config: readFile('infrastructure.yaml'))[0].id
+            env.ip = vraWaitForAddress(
+                deploymentId: env.depId,
+                resourceName: 'UbuntuMachine')[0]
+            echo "Deployed: ${env.depId} address: ${env.ip}"
+           }
+        }
        }
      }
    }

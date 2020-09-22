@@ -6,3 +6,4 @@ projectName: "JenkinsTest"
 reason: "Deployment from Jenkins pipeline"
 inputs:
   user: "testuser"
+  password: "$PASSWORD"

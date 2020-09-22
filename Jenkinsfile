@@ -31,11 +31,6 @@ pipeline {
               deploymentId: env.depId,
               resourceName: 'UbuntuMachine')[0]
           echo "Deployed: ${env.depId} address: ${env.ip}"
-          def sshStuff = vraRunAction(
-              deploymentId: env.depId,
-              actionId: 'Cloud.Machine.Remote.PrivateKey',
-              resourceName: 'UbuntuMachine')
-          echo "${sshStuff}"
          }
        }
      }

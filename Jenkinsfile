@@ -1,12 +1,6 @@
 pipeline {
   agent any
   
-  parameters {
-    string(name: "ip")
-    string(name: "depId")
-    string(name: "sshkey")
-  }
-  
   stages {
     stage('Build') {
       steps {

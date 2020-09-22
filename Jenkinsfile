@@ -23,7 +23,7 @@ pipeline {
     
     stage('Deploy') {
       steps {
-        withCredentials([usernameColonPassword(credentialsId: 'sshLogin', variable: 'PASSWORD')]) {
+        withCredentials([string(credentialsId: 'sshLogin', variable: 'PASSWORD')]) {
           script {
             env.depId = vraDeployFromCatalog(
                 configFormat: "yaml",

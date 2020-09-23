@@ -30,7 +30,7 @@ pipeline {
                 config: readFile('infrastructure.yaml'))[0].id
             env.ip = vraWaitForAddress(
                 deploymentId: env.depId,
-                resourceName: 'UbuntuMachine')[0]
+                resourceName: 'JavaServer')[0]
             echo "Deployed: ${env.depId} address: ${env.ip}"
            }
         }

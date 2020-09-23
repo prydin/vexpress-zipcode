@@ -5,5 +5,6 @@ deploymentName: "vexpress-zipcode-#"
 projectName: "JenkinsTest"
 reason: "Deployment from Jenkins pipeline"
 inputs:
+  environment: "AWS"
   user: "$USER"
   password: "$PASSWORD"

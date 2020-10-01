@@ -23,7 +23,7 @@ pipeline {
 
         stage('DeployVMs') {
             steps {
-                parallel({
+                parallel {
                     withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                         script {
                             def depId = vraDeployFromCatalog(
@@ -46,7 +46,7 @@ pipeline {
                             }
                         }
                     }
-                })
+                }
             }
         }
     }

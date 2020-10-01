@@ -24,26 +24,30 @@ pipeline {
         stage('DeployVMs') {
             steps {
                 parallel(
-                        appServer: withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                            script {
-                                def depId = vraDeployFromCatalog(
-                                        configFormat: "yaml",
-                                        config: readFile('infra/appserver.yaml'))[0].id
-                                env.appIp = vraWaitForAddress(
-                                        deploymentId: depId,
-                                        resourceName: 'JavaServer')[0]
-                                echo "Deployed: ${depId} address: ${env.appIp}"
+                        appServer: {
+                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                                script {
+                                    def depId = vraDeployFromCatalog(
+                                            configFormat: "yaml",
+                                            config: readFile('infra/appserver.yaml'))[0].id
+                                    env.appIp = vraWaitForAddress(
+                                            deploymentId: depId,
+                                            resourceName: 'JavaServer')[0]
+                                    echo "Deployed: ${depId} address: ${env.appIp}"
+                                }
                             }
                         },
-                        dbServer: withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                            script {
-                                def depId = vraDeployFromCatalog(
-                                        configFormat: "yaml",
-                                        config: readFile('infra/dbserver.yaml'))[0].id
-                                env.dbIp = vraWaitForAddress(
-                                        deploymentId: depId,
-                                        resourceName: 'DBServer')[0]
-                                echo "Deployed: ${depId} address: ${env.dbIp}"
+                        dbServer: {
+                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                                script {
+                                    def depId = vraDeployFromCatalog(
+                                            configFormat: "yaml",
+                                            config: readFile('infra/dbserver.yaml'))[0].id
+                                    env.dbIp = vraWaitForAddress(
+                                            deploymentId: depId,
+                                            resourceName: 'DBServer')[0]
+                                    echo "Deployed: ${depId} address: ${env.dbIp}"
+                                }
                             }
                         })
             }

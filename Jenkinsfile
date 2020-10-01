@@ -23,20 +23,18 @@ pipeline {
 
         stage('DeployVMs') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                    parallel({
-                        appServer: {
-                            script {
-                                def depId = vraDeployFromCatalog(
-                                        configFormat: "yaml",
-                                        config: readFile('infra/appserver.yaml'))[0].id
-                                env.appIp = vraWaitForAddress(
-                                        deploymentId: depId,
-                                        resourceName: 'JavaServer')[0]
-                                echo "Deployed: ${depId} address: ${env.appIp}"
-                            }
+                parallel({
+                    withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                        script {
+                            def depId = vraDeployFromCatalog(
+                                    configFormat: "yaml",
+                                    config: readFile('infra/appserver.yaml'))[0].id
+                            env.appIp = vraWaitForAddress(
+                                    deploymentId: depId,
+                                    resourceName: 'JavaServer')[0]
+                            echo "Deployed: ${depId} address: ${env.appIp}"
                         }
-                        dbServer: {
+                        withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                             script {
                                 def depId = vraDeployFromCatalog(
                                         configFormat: "yaml",
@@ -47,8 +45,8 @@ pipeline {
                                 echo "Deployed: ${depId} address: ${env.dbIp}"
                             }
                         }
-                    })
-                }
+                    }
+                })
             }
         }
     }

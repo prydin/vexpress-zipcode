@@ -23,9 +23,9 @@ pipeline {
 
         stage('DeployVMs') {
             steps {
-                parallel(
-                        appServer: {
-                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                    parallel(
+                            appServer: {
                                 script {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
@@ -35,10 +35,8 @@ pipeline {
                                             resourceName: 'JavaServer')[0]
                                     echo "Deployed: ${depId} address: ${env.appIp}"
                                 }
-                            }
-                        },
-                        dbServer: {
-                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                            },
+                            dbServer: {
                                 script {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
@@ -48,8 +46,8 @@ pipeline {
                                             resourceName: 'DBServer')[0]
                                     echo "Deployed: ${depId} address: ${env.dbIp}"
                                 }
-                            }
-                        })
+                            })
+                }
             }
         }
     }

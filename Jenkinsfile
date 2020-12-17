@@ -52,6 +52,17 @@ pipeline {
                         })
             }
         }
+        stage('Configure') {
+            steps {
+                parallel(
+                        appServer: {
+                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                                ssh
+                            }
+                        }
+                )
+            }
+        }
     }
 }
 

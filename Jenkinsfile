@@ -55,7 +55,7 @@ pipeline {
         stage('Configure') {
             steps {
                 parallel(
-                        appServer: {
+                        dbServer: {
                             withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                                 script {
                                     def remote = [:]
@@ -66,8 +66,9 @@ pipeline {
                                     remote.allowAnyHosts = true
                                     echo "Remote: $remote"
                                     stage('Remote SSH') {
-                                        sshCommand remote: remote, command: "ls -lrt"
-                                        sshCommand remote: remote, command: "for i in {1..5}; do echo -n \"Loop \$i \"; date ; sleep 1; done"
+                                        sshPut remote: remote, from: 'src/sql/initPostgres.sql', into: '/tmp'
+                                        sshCommand remote: remote, command: "postgres psql < /tmp/initPostgres.sql"
+                                        sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                     }
                                 }
                             }

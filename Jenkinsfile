@@ -67,7 +67,11 @@ pipeline {
                                     remote.allowAnyHosts = true
                                     echo "Remote: $remote"
                                     stage('Remote SSH') {
-                                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
+                                        // The first first attempt may fail if cloud-init hasn't created user account yet
+                                        retry count: 20 {
+                                            sleep time: 10, unit: 'SECONDS'
+                                            sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
+                                        }
                                         sshCommand remote: remote, command: "postgres psql < /tmp/initPostgres.sql"
                                         sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                     }

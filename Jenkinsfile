@@ -68,7 +68,7 @@ pipeline {
                                     echo "Remote: $remote"
                                     stage('Remote SSH') {
                                         // The first first attempt may fail if cloud-init hasn't created user account yet
-                                        retry count: 20 {
+                                        retry(20) {
                                             sleep time: 10, unit: 'SECONDS'
                                             sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
                                         }

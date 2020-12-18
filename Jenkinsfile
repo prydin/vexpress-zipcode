@@ -72,7 +72,7 @@ pipeline {
                                             sleep time: 10, unit: 'SECONDS'
                                             sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
                                         }
-                                        sshCommand remote: remote, command: "postgres psql < /tmp/initPostgres.sql"
+                                        sshCommand remote: remote, command: "sudo postgres psql < /tmp/initPostgres.sql"
                                         sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                     }
                                 }

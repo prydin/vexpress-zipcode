@@ -61,8 +61,8 @@ pipeline {
                                     def remote = [:]
                                     remote.name = 'test'
                                     remote.host = env.appIp
-                                    remote.user = '${USER}'
-                                    remote.password = '${PASSWORD}'
+                                    remote.user = USER
+                                    remote.password = PASSWORD
                                     remote.allowAnyHosts = true
                                     stage('Remote SSH') {
                                         sshCommand remote: remote, command: "ls -lrt"

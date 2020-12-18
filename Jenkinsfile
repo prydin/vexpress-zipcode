@@ -67,7 +67,7 @@ pipeline {
                                     remote.allowAnyHosts = true
                                     echo "Remote: $remote"
                                     stage('Remote SSH') {
-                                        sshPut remote: remote, from: 'src/sql/initPostgres.sql', into: '/tmp'
+                                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
                                         sshCommand remote: remote, command: "postgres psql < /tmp/initPostgres.sql"
                                         sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                     }

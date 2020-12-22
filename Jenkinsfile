@@ -47,7 +47,8 @@ pipeline {
                                     env.dbIp = vraWaitForAddress(
                                             deploymentId: depId,
                                             resourceName: 'DBServer')[0]
-                                    echo "Deployed: ${depId} address: ${env.dbIp}"
+                                    def internalIp = getInternalAddress(depId, "DBServer")
+                                    echo "Deployed: ${depId} external address: ${env.dbIp}, internal address: ${internalIp}"
                                 }
                             }
                         })
@@ -66,16 +67,14 @@ pipeline {
                                     remote.password = PASSWORD
                                     remote.allowAnyHosts = true
                                     echo "Remote: $remote"
-                                    stage('Remote SSH') {
-                                        // The first first attempt may fail if cloud-init hasn't created user account yet
-                                        retry(20) {
-                                            sleep time: 10, unit: 'SECONDS'
-                                            sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
-                                        }
-                                        sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
-                                        sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
-                                        sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
+                                    // The first first attempt may fail if cloud-init hasn't created user account yet
+                                    retry(20) {
+                                        sleep time: 10, unit: 'SECONDS'
+                                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
                                     }
+                                    sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
+                                    sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
+                                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                 }
                             }
                         }
@@ -83,5 +82,14 @@ pipeline {
             }
         }
     }
+}
+
+def getInternalAddress(id, resourceName) {
+    def dep = vraGetDeployment(
+            deploymentId: id,
+            expandResources: true
+    )
+    def internalIp = dep.resources.find({ it.name == resourceName }).properties.networks[0].address
+    echo "$internalIp"
 }
 

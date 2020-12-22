@@ -1,6 +1,6 @@
 count: 1
 catalogItemName: "postgresql-latest-ubuntu-18"
-version: "4"
+version: "5"
 deploymentName: "vexpress-zipcode-db-#"
 projectName: "JenkinsTest"
 reason: "Deployment from Jenkins pipeline"

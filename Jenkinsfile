@@ -31,9 +31,10 @@ pipeline {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
                                             config: readFile('infra/appserver.yaml'))[0].id
-                                    env.appIp = vraWaitForAddress(
+                                    vraWaitForAddress(
                                             deploymentId: depId,
                                             resourceName: 'JavaServer')[0]
+                                    env.appIp = getInternalAddress(depId, "JavaServer")
                                     echo "Deployed: ${depId} address: ${env.appIp}"
                                 }
                             }
@@ -44,10 +45,10 @@ pipeline {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
                                             config: readFile('infra/dbserver.yaml'))[0].id
-                                    env.dbIp = vraWaitForAddress(
+                                    vraWaitForAddress(
                                             deploymentId: depId,
                                             resourceName: 'DBServer')[0]
-                                    def internalIp = getInternalAddress(depId, "DBServer")
+                                    env.dbIp = getInternalAddress(depId, "DBServer")
                                     echo "Deployed: ${depId} external address: ${env.dbIp}, internal address: ${internalIp}"
                                 }
                             }

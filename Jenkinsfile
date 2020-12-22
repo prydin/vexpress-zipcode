@@ -89,7 +89,6 @@ def getInternalAddress(id, resourceName) {
             deploymentId: id,
             expandResources: true
     )
-    def internalIp = dep.resources.find({ it.name == resourceName }).properties.networks[0].address
-    echo "$internalIp"
+    return dep.resources.find({ it.name == resourceName }).properties.networks[0].address
 }
 

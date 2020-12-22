@@ -63,7 +63,7 @@ pipeline {
                                 script {
                                     def remote = [:]
                                     remote.name = 'test'
-                                    remote.host = env.appIp
+                                    remote.host = env.dbIp
                                     remote.user = USER
                                     remote.password = PASSWORD
                                     remote.allowAnyHosts = true

@@ -67,6 +67,7 @@ pipeline {
                                     remote.user = USER
                                     remote.password = PASSWORD
                                     remote.allowAnyHosts = true
+                                    remote.logLevel = 'FINEST'
                                     echo "Remote: $remote"
                                     // The first first attempt may fail if cloud-init hasn't created user account yet
                                     retry(20) {

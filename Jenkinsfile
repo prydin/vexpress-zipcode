@@ -49,7 +49,7 @@ pipeline {
                                             deploymentId: depId,
                                             resourceName: 'DBServer')[0]
                                     env.dbIp = getInternalAddress(depId, "DBServer")
-                                    echo "Deployed: ${depId} external address: ${env.dbIp}, internal address: ${internalIp}"
+                                    echo "Deployed: ${depId} address: ${env.dbIp}"
                                 }
                             }
                         })

@@ -1,0 +1,8 @@
+[Unit]
+Description=vExpress Zipcode
+
+[Service]
+ExecStart=/usr/bin/java -Xmx512m -jar /opt/vexpress-zipcode/zipcode.jar
+
+[Install]
+WantedBy=multi-user.target

@@ -105,7 +105,7 @@ pipeline {
                                         sshPut remote: remote, from: 'application.properties', into: '/tmp'
                                     }
                                     sshPut remote: remote, from: 'scripts/vexpress-zipcode.service', into: '/tmp'
-                                    sshCommand remote: remote, sudo: true, command: "cd /opt\n" +
+                                    sshCommand remote: remote, sudo: true, logLevel: 'FINEST', command: "cd /opt\n" +
                                             "mkdir vexpress-zipcode\n" +
                                             "chown ${USER} vexpress-zipcode\n" +
                                             "cd vexpress-zipcode\n" +

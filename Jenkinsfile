@@ -28,7 +28,7 @@ pipeline {
 
         stage('Publish') {
             steps {
-                print archiveArtifacts(artifacts: "build/libs/zipcode-${env.version}.jar", fingerprint: true, onlyIfSuccessful: true)
+                archiveArtifacts(artifacts: "build/libs/zipcode-${env.version}.jar", fingerprint: true, onlyIfSuccessful: true)
                 archiveArtifacts(artifacts: 'src/main/sql/initPostgres.sql', fingerprint: true, onlyIfSuccessful: true)
             }
         }
@@ -83,27 +83,6 @@ pipeline {
         stage('Configure') {
             steps {
                 parallel(
-                        dbServer: {
-                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                                script {
-                                    def remote = [:]
-                                    remote.name = 'dbServer'
-                                    remote.host = env.dbIp
-                                    remote.user = USER
-                                    remote.password = PASSWORD
-                                    remote.allowAnyHosts = true
-
-                                    // The first first attempt may fail if cloud-init hasn't created user account yet
-                                    retry(20) {
-                                        sleep time: 10, unit: 'SECONDS'
-                                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
-                                    }
-                                    sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
-                                    sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
-                                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
-                                }
-                            }
-                        },
                         appServer: {
                             withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                                 script {
@@ -123,7 +102,28 @@ pipeline {
                                             "mkdir vexpress-zipcode\n" +
                                             "chown ${USER} vexpress-zipcode\n" +
                                             "cd vexpress-zipcode;" +
-                                            "wget ${env.JENKINS_URL}"
+                                            "wget ${env.BUILD_URL}/artifact/build/libs/zipcode-${env.version}.jar"
+                                }
+                            }
+                        },
+                        dbServer: {
+                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                                script {
+                                    def remote = [:]
+                                    remote.name = 'dbServer'
+                                    remote.host = env.dbIp
+                                    remote.user = USER
+                                    remote.password = PASSWORD
+                                    remote.allowAnyHosts = true
+
+                                    // The first first attempt may fail if cloud-init hasn't created user account yet
+                                    retry(20) {
+                                        sleep time: 10, unit: 'SECONDS'
+                                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
+                                    }
+                                    sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
+                                    sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
+                                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                 }
                             }
                         }

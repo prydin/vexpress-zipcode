@@ -45,8 +45,10 @@ pipeline {
                     }
                 }
                 withCredentials([usernamePassword(credentialsId: 'apiToken', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                    env.apiUser = USER
-                    env.apiToken = PASSWORD
+                    script {
+                        env.apiUser = USER
+                        env.apiToken = PASSWORD
+                    }
                 }
             }
         }

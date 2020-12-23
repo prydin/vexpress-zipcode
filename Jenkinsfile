@@ -40,7 +40,7 @@ pipeline {
                         env.DBUSER = USER
                         env.DBPASSWORD = PASSWORD
                         def txt = readFile(file: 'templates/application-properties.tpl')
-                        txt = txt.replace("$DBUSER", env.DBUSER).txt.replace("$DBPASSWORD", env.DBPASSWORD)
+                        txt = txt.replace("$DBUSER", env.DBUSER).replace("$DBPASSWORD", env.DBPASSWORD)
                         writeFile(file: "application.properties", text: txt)
                     }
                 }

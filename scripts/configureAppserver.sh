@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /opt
 mkdir vexpress-zipcode
 chown $1 vexpress-zipcode
 cd vexpress-zipcode

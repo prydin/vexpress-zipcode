@@ -2,6 +2,15 @@ pipeline {
     agent any
 
     stages {
+        stage('Init') {
+            script {
+                def r = /version\s*=\s*["'](.+)["']/
+                def gradle = readFile(file: 'build.gradle')
+                env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
+                echo "Inferred version: ${env.version}"
+            }
+        }
+
         stage('Build') {
             steps {
                 sh './gradlew clean build'
@@ -17,8 +26,22 @@ pipeline {
 
         stage('Publish') {
             steps {
-                archiveArtifacts(artifacts: 'build/libs/zipcode-*.jar ', fingerprint: true, onlyIfSuccessful: true)
-                archiveArtifacts(artifacts: 'src/main/sql/initPostgres.sql ', fingerprint: true, onlyIfSuccessful: true)
+                archiveArtifacts(artifacts: "build/libs/zipcode-${env.version}.jar", fingerprint: true, onlyIfSuccessful: true)
+                archiveArtifacts(artifacts: 'src/main/sql/initPostgres.sql', fingerprint: true, onlyIfSuccessful: true)
+            }
+        }
+
+        stage("InitDeployment") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dbCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                    script {
+                        env.DBUSER = USER
+                        env.DBPASSWORD = PASSWORD
+                        def txt = readFile(file: 'templates/application-properties.tpl')
+                        txt = txt.replace("$DBUSER", env.DBUSER).txt.replace("$DBPASSWORD", env.DBPASSWORD)
+                        writeFile(file: "application.properties", text: txt)
+                    }
+                }
             }
         }
 
@@ -62,13 +85,12 @@ pipeline {
                             withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                                 script {
                                     def remote = [:]
-                                    remote.name = 'test'
+                                    remote.name = 'dbServer'
                                     remote.host = env.dbIp
                                     remote.user = USER
                                     remote.password = PASSWORD
                                     remote.allowAnyHosts = true
-                                    remote.logLevel = 'FINEST'
-                                    echo "Remote: $remote"
+
                                     // The first first attempt may fail if cloud-init hasn't created user account yet
                                     retry(20) {
                                         sleep time: 10, unit: 'SECONDS'
@@ -77,6 +99,29 @@ pipeline {
                                     sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
                                     sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
                                     sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
+                                }
+                            }
+                        },
+                        appServer: {
+                            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                                script {
+                                    def remote = [:]
+                                    remote.name = 'appServer'
+                                    remote.host = env.appIp
+                                    remote.user = USER
+                                    remote.password = PASSWORD
+                                    remote.allowAnyHosts = true
+
+                                    // The first first attempt may fail if cloud-init hasn't created user account yet
+                                    retry(20) {
+                                        sleep time: 10, unit: 'SECONDS'
+                                        sshPut remote: remote, from: 'application.properties', into: '/tmp'
+                                    }
+                                    sshCommand remote: remote, sudo: true, command: "cd /opt\n" +
+                                            "mkdir vexpress-zipcode\n" +
+                                            "chown ${USER} vexpress-zipcode\n" +
+                                            "cd vexpress-zipcode;" +
+                                            "wget ${env.JENKINS_URL}"
                                 }
                             }
                         }

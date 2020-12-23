@@ -8,3 +8,5 @@ inputs:
   environment: "AWS"
   user: "$USER"
   password: "$PASSWORD"
+  dbuser: "$DBUSER"
+  dbpassword: "$DBPASSWORD"

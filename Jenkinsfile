@@ -39,9 +39,6 @@ pipeline {
                     script {
                         env.DBUSER = USER
                         env.DBPASSWORD = PASSWORD
-                        def txt = readFile(file: 'templates/application-properties.tpl')
-                        txt = txt.replace("$DBUSER", env.DBUSER).replace("$DBPASSWORD", env.DBPASSWORD)
-                        writeFile(file: "application.properties", text: txt)
                     }
                 }
                 withCredentials([usernamePassword(credentialsId: 'apiToken', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
@@ -92,6 +89,10 @@ pipeline {
                         appServer: {
                             withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                                 script {
+                                    def txt = readFile(file: 'templates/application-properties.tpl')
+                                    txt = txt.replace('$DBUSER', env.DBUSER).replace('$DBPASSWORD', env.DBPASSWORD).replace('$DBADDRESS', env.dbIp)
+                                    writeFile(file: "application.properties", text: txt)
+
                                     def remote = [:]
                                     remote.name = 'appServer'
                                     remote.host = env.appIp

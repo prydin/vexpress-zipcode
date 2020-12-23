@@ -44,6 +44,10 @@ pipeline {
                         writeFile(file: "application.properties", text: txt)
                     }
                 }
+                withCredentials([usernamePassword(credentialsId: 'apiToken', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                    env.apiUser = USER
+                    env.apiToken = PASSWORD
+                }
             }
         }
 
@@ -102,7 +106,7 @@ pipeline {
                                             "mkdir vexpress-zipcode\n" +
                                             "chown ${USER} vexpress-zipcode\n" +
                                             "cd vexpress-zipcode;" +
-                                            "wget ${env.BUILD_URL}/artifact/build/libs/zipcode-${env.version}.jar"
+                                            "wget --auth-no-challenge --user=${env.apiUser} --password=${env.apiToken} ${env.BUILD_URL}/artifact/build/libs/zipcode-${env.version}.jar"
                                 }
                             }
                         },

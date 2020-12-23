@@ -1,6 +1,5 @@
 #!/bin/bash
-cd /opt
-mkdir vexpress-zipcode
+mkdir /opt/vexpress-zipcode
 chown $1 vexpress-zipcode
 cd vexpress-zipcode
 mv /tmp/application.properties .

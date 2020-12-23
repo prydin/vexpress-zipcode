@@ -2,6 +2,7 @@
 Description=vExpress Zipcode
 
 [Service]
+WorkingDirectory=/opt/vexpress-zipcode
 ExecStart=/usr/bin/java -Xmx512m -jar /opt/vexpress-zipcode/zipcode.jar
 
 [Install]

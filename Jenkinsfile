@@ -146,8 +146,8 @@ pipeline {
                         remote.user = USER
                         remote.password = PASSWORD
                         remote.allowAnyHosts = true
+                        sshCommand remote: remote, sudo: true, command: "systemctl start vexpress-zipcode"
                     }
-                    sshCommand remote: remote, sudo: true, command: "systemctl start vexpress-zipcode"
                 }
             }
         }

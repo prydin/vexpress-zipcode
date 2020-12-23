@@ -105,15 +105,9 @@ pipeline {
                                         sshPut remote: remote, from: 'application.properties', into: '/tmp'
                                     }
                                     sshPut remote: remote, from: 'scripts/vexpress-zipcode.service', into: '/tmp'
-                                    sshCommand remote: remote, sudo: true, logLevel: 'FINEST', command: "cd /opt; " +
-                                            "mkdir vexpress-zipcode; " +
-                                            "chown ${USER} vexpress-zipcode; " +
-                                            "cd vexpress-zipcode; " +
-                                            "mv /tmp/application.properties .; " +
-                                            "wget --auth-no-challenge --user=${env.apiUser} --password=${env.apiToken} ${env.BUILD_URL}/artifact/build/libs/zipcode-${env.version}.jar -o zipcode.jar; " +
-                                            "mv /tmp/vexpress-zipcode.service /etc/systemd/system; " +
-                                            "chmod 664 /etc/systemd/system/vexpress-zipcode.service; " +
-                                            "systemctl enable vexpress-zipcode"
+                                    sshPut remote: remote, from: 'scripts/configureAppserver.sh', into: '/tmp'
+                                    sshCommand remote: remote, command: 'chmod +x /tmp/configureAppserver.sh'
+                                    sshCommand remote: remote, sudo: true, command: "/tmp/configureAppserver.sh ${USER} ${env.apiUser} ${env.apiToken} ${env.BUILD_URL} ${env.version}"
                                 }
                             }
                         },

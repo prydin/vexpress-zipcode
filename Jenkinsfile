@@ -3,11 +3,13 @@ pipeline {
 
     stages {
         stage('Init') {
-            script {
-                def r = /version\s*=\s*["'](.+)["']/
-                def gradle = readFile(file: 'build.gradle')
-                env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
-                echo "Inferred version: ${env.version}"
+            steps {
+                script {
+                    def r = /version\s*=\s*["'](.+)["']/
+                    def gradle = readFile(file: 'build.gradle')
+                    env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
+                    echo "Inferred version: ${env.version}"
+                }
             }
         }
 

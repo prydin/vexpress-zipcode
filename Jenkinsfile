@@ -28,7 +28,7 @@ pipeline {
 
         stage('Publish') {
             steps {
-                archiveArtifacts(artifacts: "build/libs/zipcode-${env.version}.jar", fingerprint: true, onlyIfSuccessful: true)
+                print archiveArtifacts(artifacts: "build/libs/zipcode-${env.version}.jar", fingerprint: true, onlyIfSuccessful: true)
                 archiveArtifacts(artifacts: 'src/main/sql/initPostgres.sql', fingerprint: true, onlyIfSuccessful: true)
             }
         }

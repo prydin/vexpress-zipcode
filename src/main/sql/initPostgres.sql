@@ -2,6 +2,11 @@
 -- PostgreSQL database dump
 --
 
+
+create DATABASE zipcodes;
+
+use zipcodes;
+
 create TABLE zipcodes (
     zip integer NOT NULL,
     locality character varying(200),

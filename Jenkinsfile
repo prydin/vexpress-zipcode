@@ -129,7 +129,7 @@ pipeline {
                                     }
                                     sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
                                     sshCommand remote: remote, command: 'echo "create database zipcodes" | sudo -u postgres psql'
-                                    sshCommand remote: remote, command: "sudo -u postgres psql < /tmp/initPostgres.sql"
+                                    sshCommand remote: remote, command: "sudo -u postgres psql zipcodes < /tmp/initPostgres.sql"
                                     sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
                                 }
                             }

@@ -13,14 +13,18 @@ public class ZipCodeController {
   @Autowired ZipCodeRepository zipCodeRepository;
 
   @GetMapping(
+      path = "/health",
+      produces = {MediaType.TEXT_PLAIN_VALUE})
+  public String health() {
+    return "OK";
+  }
+
+  @GetMapping(
       path = "/zipcode/{zipCode}",
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public ZipCodeDetails lookupZipcode(@PathVariable("zipCode") final int zipCode)
       throws ZipNotFoundException {
     final ZipCodeDetails z = innerLookupZip(zipCode);
-    if (z == null) {
-      throw new ZipNotFoundException(Integer.toString(zipCode));
-    }
     return z;
   }
 
@@ -33,12 +37,16 @@ public class ZipCodeController {
     final ZipCodeDetails start = lookupZipcode(startZip);
     final ZipCodeDetails end = lookupZipcode(endZip);
     return new DistanceResponse(
-        distance(start.getLat(), start.getLon(), end.getLat(), end.getLon()), "miles");
+        ZipCodeController.distance(start.getLat(), start.getLon(), end.getLat(), end.getLon()),
+        "miles");
   }
 
-  private ZipCodeDetails innerLookupZip(final int zipCode) {
+  private ZipCodeDetails innerLookupZip(final int zipCode) throws ZipNotFoundException {
     final List<ZipCodeDetails> z = zipCodeRepository.findByZip(zipCode);
-    return z.size() == 1 ? z.get(0) : null;
+    if (z.size() == 0) {
+      throw new ZipNotFoundException("Zipcode not found: " + Integer.toString(zipCode));
+    }
+    return z.get(0);
   }
 
   static double distance(

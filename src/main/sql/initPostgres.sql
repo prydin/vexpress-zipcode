@@ -10,6 +10,9 @@ create TABLE zipcodes (
     long numeric(12,8)
 );
 
+-- You wouldn't do this is production...
+grant select on zipcodes to public;
+
 COPY zipcodes (zip, locality, state, lat, long) FROM stdin;
 601	Adjuntas	PR	18.18004000	-66.75218000
 602	Aguada	PR	18.36073000	-67.17517000

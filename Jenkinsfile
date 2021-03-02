@@ -5,7 +5,6 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    def r = /version\s*=\s*["'](.+)["']/
                     def gradle = readFile(file: 'build.gradle')
                     env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
                     echo "Inferred version: ${env.version}"
@@ -84,45 +83,47 @@ pipeline {
             }
         }
         stage('Configure') {
-            withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                script {
-                    def remote = [:]
-                    remote.name = 'dbServer'
-                    remote.host = env.dbIp
-                    remote.user = USER
-                    remote.password = PASSWORD
-                    remote.allowAnyHosts = true
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                    script {
+                        def remote = [:]
+                        remote.name = 'dbServer'
+                        remote.host = env.dbIp
+                        remote.user = USER
+                        remote.password = PASSWORD
+                        remote.allowAnyHosts = true
 
-                    // The first first attempt may fail if cloud-init hasn't created user account yet
-                    retry(20) {
-                        sleep time: 10, unit: 'SECONDS'
-                        sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
+                        // The first first attempt may fail if cloud-init hasn't created user account yet
+                        retry(20) {
+                            sleep time: 10, unit: 'SECONDS'
+                            sshPut remote: remote, from: 'src/main/sql/initPostgres.sql', into: '/tmp'
+                        }
+                        sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
+                        sshCommand remote: remote, command: 'echo "create database zipcodes" | sudo -u postgres psql'
+                        sshCommand remote: remote, command: "sudo -u postgres psql zipcodes < /tmp/initPostgres.sql"
+                        sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
+
+                        def txt = readFile(file: 'templates/application-properties.tpl')
+                        txt = txt.replace('$DBUSER', env.DBUSER).replace('$DBPASSWORD', env.DBPASSWORD).replace('$DBADDRESS', env.dbIp)
+                        writeFile(file: "application.properties", text: txt)
+
+                        remote = [:]
+                        remote.name = 'appServer'
+                        remote.host = env.appIp
+                        remote.user = USER
+                        remote.password = PASSWORD
+                        remote.allowAnyHosts = true
+
+                        // The first first attempt may fail if cloud-init hasn't created user account yet
+                        retry(20) {
+                            sleep time: 10, unit: 'SECONDS'
+                            sshPut remote: remote, from: 'application.properties', into: '/tmp'
+                        }
+                        sshPut remote: remote, from: 'scripts/vexpress-zipcode.service', into: '/tmp'
+                        sshPut remote: remote, from: 'scripts/configureAppserver.sh', into: '/tmp'
+                        sshCommand remote: remote, command: 'chmod +x /tmp/configureAppserver.sh'
+                        sshCommand remote: remote, sudo: true, command: "/tmp/configureAppserver.sh ${USER} ${env.apiUser} ${env.apiToken} ${env.BUILD_URL} ${env.version}"
                     }
-                    sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
-                    sshCommand remote: remote, command: 'echo "create database zipcodes" | sudo -u postgres psql'
-                    sshCommand remote: remote, command: "sudo -u postgres psql zipcodes < /tmp/initPostgres.sql"
-                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
-
-                    def txt = readFile(file: 'templates/application-properties.tpl')
-                    txt = txt.replace('$DBUSER', env.DBUSER).replace('$DBPASSWORD', env.DBPASSWORD).replace('$DBADDRESS', env.dbIp)
-                    writeFile(file: "application.properties", text: txt)
-
-                    remote = [:]
-                    remote.name = 'appServer'
-                    remote.host = env.appIp
-                    remote.user = USER
-                    remote.password = PASSWORD
-                    remote.allowAnyHosts = true
-
-                    // The first first attempt may fail if cloud-init hasn't created user account yet
-                    retry(20) {
-                        sleep time: 10, unit: 'SECONDS'
-                        sshPut remote: remote, from: 'application.properties', into: '/tmp'
-                    }
-                    sshPut remote: remote, from: 'scripts/vexpress-zipcode.service', into: '/tmp'
-                    sshPut remote: remote, from: 'scripts/configureAppserver.sh', into: '/tmp'
-                    sshCommand remote: remote, command: 'chmod +x /tmp/configureAppserver.sh'
-                    sshCommand remote: remote, sudo: true, command: "/tmp/configureAppserver.sh ${USER} ${env.apiUser} ${env.apiToken} ${env.BUILD_URL} ${env.version}"
                 }
             }
         }

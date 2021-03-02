@@ -108,6 +108,9 @@ pipeline {
                                     sshPut remote: remote, from: 'scripts/vexpress-zipcode.service', into: '/tmp'
                                     sshPut remote: remote, from: 'scripts/configureAppserver.sh', into: '/tmp'
                                     sshCommand remote: remote, command: 'chmod +x /tmp/configureAppserver.sh'
+
+                                    // Don't start application until database is fully configured.
+                                    sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-configured ]; do sleep 1; done"
                                     sshCommand remote: remote, sudo: true, command: "/tmp/configureAppserver.sh ${USER} ${env.apiUser} ${env.apiToken} ${env.BUILD_URL} ${env.version}"
                                 }
                             }
@@ -130,7 +133,7 @@ pipeline {
                                     sshCommand remote: remote, command: "while [ ! -f /tmp/postgres-running ]; do sleep 1; done"
                                     sshCommand remote: remote, command: 'echo "create database zipcodes" | sudo -u postgres psql'
                                     sshCommand remote: remote, command: "sudo -u postgres psql zipcodes < /tmp/initPostgres.sql"
-                                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql"
+                                    sshCommand remote: remote, command: "rm /tmp/initPostgres.sql; touch /tmp/postgres-configured"
                                 }
                             }
                         }

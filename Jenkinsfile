@@ -142,7 +142,7 @@ pipeline {
                     }
                 }
                 // Store build state
-                withAWS(credentialsId: 'jenkins') {
+                withAWS(credentials: 'jenkins') {
                     writeJSON(file: 'state.json', json: ['url': "http://${env.appId}:8080"])
                     s3Upload(file: 'state.json', bucket: 'prydin-build-states', path: 'vexpress/zipcode/prod/state.json')
                 }

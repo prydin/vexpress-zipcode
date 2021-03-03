@@ -141,6 +141,11 @@ pipeline {
                         sshCommand remote: remote, sudo: true, command: "systemctl start vexpress-zipcode"
                     }
                 }
+                // Store build state
+                withAWS(credentialsId: 'jenkins') {
+                    writeJSON(file: 'state.json', json: ['url': "http://${env.appId}:8080"])
+                    s3Upload(file: 'state.json', bucket: 'prydin-build-states', path: 'vexpress/zipcode/prod/state.json')
+                }
             }
         }
     }

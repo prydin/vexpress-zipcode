@@ -67,6 +67,7 @@ pipeline {
                                             resourceName: 'JavaServer')[0]
                                     env.appIp = getInternalAddress(depId, "JavaServer")
                                     echo "Deployed: ${depId} address: ${env.appIp}"
+                                    env.appDeploymentId = depId
                                 }
                             }
                         },
@@ -81,6 +82,7 @@ pipeline {
                                             resourceName: 'DBServer')[0]
                                     env.dbIp = getInternalAddress(depId, "DBServer")
                                     echo "Deployed: ${depId} address: ${env.dbIp}"
+                                    env.dbDeploymentId = depId
                                 }
                             }
                         })
@@ -147,7 +149,7 @@ pipeline {
                 }
                 // Store build state
                 withAWS(credentials: 'jenkins') {
-                    writeJSON(file: 'state.json', json: ['url': "http://${env.appIp}:8080"])
+                    writeJSON(file: 'state.json', json: ['url': "http://${env.appIp}:8080", 'deploymentIds': [env.appDeploymentId, env.dbDeploymentId]])
                     s3Upload(file: 'state.json', bucket: 'prydin-build-states', path: "vexpress/zipcode/${params.ENVIRONMENT}/state.json")
                 }
             }

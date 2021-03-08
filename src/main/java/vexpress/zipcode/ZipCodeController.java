@@ -61,6 +61,6 @@ public class ZipCodeController {
     double theta =
         Math.acos(Math.sin(x1) * Math.sin(x2) + Math.cos(x1) * Math.cos(x2) * Math.cos(y1 - y2));
     theta = Math.toDegrees(theta);
-    return (60 * theta) / 1.15078;
+    return (60 * theta) * 1.1852;
   }
 }

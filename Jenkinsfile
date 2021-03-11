@@ -168,6 +168,7 @@ pipeline {
 
 def getInternalAddress(id, resourceName) {
     def dep = vraGetDeployment(
+            trustSelfSignedCert: true,
             deploymentId: id,
             expandResources: true
     )

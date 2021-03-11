@@ -67,6 +67,7 @@ pipeline {
                                             config: readFile('infra/appserver.yaml'))[0].id
                                     vraWaitForAddress(
                                             deploymentId: depId,
+                                            trustSelfSignedCert: true,
                                             resourceName: 'JavaServer')[0]
                                     env.appIp = getInternalAddress(depId, "JavaServer")
                                     echo "Deployed: ${depId} address: ${env.appIp}"
@@ -82,6 +83,7 @@ pipeline {
                                             configFormat: "yaml",
                                             config: readFile('infra/dbserver.yaml'))[0].id
                                     vraWaitForAddress(
+                                            trustSelfSignedCert: true,
                                             deploymentId: depId,
                                             resourceName: 'DBServer')[0]
                                     env.dbIp = getInternalAddress(depId, "DBServer")

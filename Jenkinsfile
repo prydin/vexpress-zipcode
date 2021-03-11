@@ -75,6 +75,7 @@ pipeline {
                             withCredentials([usernamePassword(credentialsId: 'sshCreds', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
                                 script {
                                     def depId = vraDeployFromCatalog(
+                                            trustSelfSignedCert: true,
                                             configFormat: "yaml",
                                             config: readFile('infra/dbserver.yaml'))[0].id
                                     vraWaitForAddress(

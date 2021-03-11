@@ -61,6 +61,7 @@ pipeline {
                                 script {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
+                                            trustSelfSignedCert: true,
                                             config: readFile('infra/appserver.yaml'))[0].id
                                     vraWaitForAddress(
                                             deploymentId: depId,

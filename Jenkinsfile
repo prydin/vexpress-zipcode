@@ -4,6 +4,8 @@ pipeline {
     parameters {
         string(defaultValue: 'dev', description: 'Target environment', name: 'ENVIRONMENT', trim: true)
         string(defaultValue: 'JenkinsTest', description: 'Project', name: 'PROJECT', trim: true)
+        string(defaultValue: 'AWS', description: 'Cloud', name: 'CLOUD', trim: true)
+
     }
 
     stages {
@@ -14,6 +16,7 @@ pipeline {
                     env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
                     echo "Inferred version: ${env.version}"
                     env.PROJECT = params.PROJECT ? params.PROJECT : "JenkinsTest" // TODO: Change to Virtual Express
+                    env.CLOUD = params.CLOUD ? params.CLOUD : "AWS"
                 }
             }
         }

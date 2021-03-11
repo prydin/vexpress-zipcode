@@ -5,7 +5,7 @@ deploymentName: "vexpress-zipcode-app-$ENVIRONMENT-#"
 projectName: "$PROJECT"
 reason: "Deployment from Jenkins pipeline"
 inputs:
-  environment: "AWS"
+  environment: "$CLOUD"
   user: "$USER"
   password: "$PASSWORD"
   size: "tiny"

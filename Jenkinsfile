@@ -3,6 +3,7 @@ pipeline {
 
     parameters {
         string(defaultValue: 'dev', description: 'Target environment', name: 'ENVIRONMENT', trim: true)
+        string(defaultValue: 'JenkinsTest', description: 'Project', name: 'PROJECT', trim: true)
     }
 
     stages {
@@ -12,6 +13,7 @@ pipeline {
                     def gradle = readFile(file: 'build.gradle')
                     env.version = (gradle =~ /version\s*=\s*["'](.+)["']/)[0][1]
                     echo "Inferred version: ${env.version}"
+                    env.PROJECT = params.PROJECT ? params.PROJECT : "JenkinsTest" // TODO: Change to Virtual Express
                 }
             }
         }

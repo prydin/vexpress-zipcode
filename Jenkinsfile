@@ -130,7 +130,7 @@ pipeline {
                                 replace('$DBPASSWORD', env.DBPASSWORD).
                                 replace('$DBADDRESS', env.dbIp).
                                 replace('$TO_URL', env.TO_URL).
-                                replace('$TO_TOKEN', ent.TO_TOKEN)
+                                replace('$TO_TOKEN', env.TO_TOKEN)
                         writeFile(file: "application.properties", text: txt)
 
                         remote = [:]

@@ -67,6 +67,7 @@ pipeline {
                                     def depId = vraDeployFromCatalog(
                                             configFormat: "yaml",
                                             trustSelfSignedCert: true,
+                                            timeout: 1800,
                                             config: readFile('infra/appserver.yaml'))[0].id
                                     vraWaitForAddress(
                                             deploymentId: depId,
@@ -85,6 +86,7 @@ pipeline {
                                     def depId = vraDeployFromCatalog(
                                             trustSelfSignedCert: true,
                                             configFormat: "yaml",
+                                            timeout: 1800,
                                             config: readFile('infra/dbserver.yaml'))[0].id
                                     vraWaitForAddress(
                                             trustSelfSignedCert: true,

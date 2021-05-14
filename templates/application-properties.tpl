@@ -4,3 +4,7 @@ spring.jpa.database=POSTGRESQL
 spring.datasource.url=jdbc:postgresql://$DBADDRESS/zipcodes
 spring.datasource.username=$DBUSER
 spring.datasource.password=$DBPASSWORD
+management.metrics.export.wavefront.api-token=$TO_TOKEN
+management.metrics.export.wavefront.uri=$TO_URL
+wavefront.application.name=vexpress
+wavefront.application.service=zipcode

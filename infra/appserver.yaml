@@ -1,6 +1,5 @@
 count: 1
 catalogItemName: "java-14-ubuntu-18"
-version: "10"
 deploymentName: "vexpress-zipcode-app-$ENVIRONMENT-#"
 projectName: "$PROJECT"
 reason: "Deployment from Jenkins pipeline"
